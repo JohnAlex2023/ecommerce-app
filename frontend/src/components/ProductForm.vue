@@ -33,7 +33,7 @@ export default {
 
     const token = localStorage.getItem('token');
 
-    console.log("TOKEN JWT:", token);
+
 
 
     await axios.post('http://localhost:3000/api/productos', producto, {
