@@ -4,7 +4,7 @@ const JWT_SECRET = 'secreto_super_seguro'; // Esto debería estar en una variabl
 
 // Middleware para verificar token JWT
 const verificarToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers['authorization'];
 
   // Validamos que venga un token
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
