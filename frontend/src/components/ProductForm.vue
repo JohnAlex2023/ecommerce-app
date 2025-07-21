@@ -2,8 +2,11 @@
   <form @submit.prevent="agregarProducto">
     <h2>Agregar nuevo producto</h2>
     <input v-model="nombre" placeholder="Nombre del producto" required />
+    <input v-model="descripcion" placeholder="Descripción" required />
     <input v-model="precio" type="number" placeholder="Precio" required />
     <input v-model="imagen" placeholder="URL de la imagen" required />
+    <input v-model="categoria" placeholder="Categoría" required />
+
     <button type="submit">Guardar</button>
     <p v-if="mensaje">{{ mensaje }}</p>
   </form>
@@ -17,8 +20,10 @@ export default {
   data() {
     return {
       nombre: '',
+      descripcion: '',
       precio: '',
       imagen: '',
+      categoria: '', 
       mensaje: ''
     }
   },
@@ -27,8 +32,10 @@ export default {
   try {
     const producto = {
       nombre: this.nombre,
+      descripcion: this.descripcion,
       precio: parseFloat(this.precio),
-      imagen: this.imagen
+      imagen: this.imagen,
+      categoria: this.categoria
     }
 
     const token = localStorage.getItem('token');
@@ -44,12 +51,19 @@ export default {
 
     this.mensaje = '✅ Producto agregado exitosamente';
     this.nombre = '';
+    this.descripcion = '';
     this.precio = '';
     this.imagen = '';
+    this.categoria = '';
   } catch (error) {
-    console.error('Error al agregar producto:', error);
-    this.mensaje = '❌ Error al guardar producto';
+  if (error.response) {
+    console.error('Respuesta del servidor:', error.response.data);
+  } else {
+    console.error('Error al agregar producto:', error.message);
   }
+  this.mensaje = '❌ Error al guardar producto';
+}
+
 }
 
   }

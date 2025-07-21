@@ -1,30 +1,37 @@
 <template>
-  <div>
-    <header>
-      <nav>
-        <router-link to="/">Inicio</router-link> |
-        <router-link to="/login">Login</router-link> |
-        <router-link to="/admin">Admin</router-link>
-      </nav>
-    </header>
+  <div id="app">
+    <Navbar />
 
-    <main>
-      <router-view></router-view>
+    <main class="contenido">
+      <router-view />
     </main>
+
+    <Footer />
   </div>
 </template>
 
-<style>
-nav {
-  background: #333;
-  padding: 1rem;
+<script>
+import Footer from './components/Footer.vue';
+import Navbar from './components/Navbar.vue';
+
+export default {
+  components: {
+    Footer,
+    Navbar
+  }
+};
+</script>
+
+<style scoped>
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
-nav a {
-  color: white;
-  margin-right: 1rem;
-  text-decoration: none;
-}
-main {
+
+.contenido {
+  flex: 1;
   padding: 2rem;
+  background-color: #f4f4f4;
 }
 </style>

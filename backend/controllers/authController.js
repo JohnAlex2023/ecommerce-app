@@ -4,7 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 // Clave secreta para JWT (debería ir en variable de entorno)
-const JWT_SECRET = 'secreto_super_seguro';
+const JWT_SECRET = process.env.JWT_SECRET;
+
 
 exports.registrarUsuario = async (req, res) => {
   try {
@@ -26,8 +27,8 @@ exports.registrarUsuario = async (req, res) => {
       nombre,
       email,
       password: passwordEncriptado,
-      esAdmin: esAdmin || false
-    });
+      esAdmin: false
+    }); 
 
 
     await nuevoUsuario.save();
@@ -70,7 +71,16 @@ exports.loginUsuario = async (req, res) => {
     );
 
     console.log('✅ Token generado correctamente');
-    res.json({ token });
+    res.json({
+  token,
+  usuario: {
+    id: usuario._id,
+    nombre: usuario.nombre,
+    email: usuario.email,
+    esAdmin: usuario.esAdmin
+  }
+});
+
 
   } catch (error) {
     console.error('💥 Error en login:', error);

@@ -1,12 +1,12 @@
-// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = 'secreto_super_seguro'; // Esto debería estar en una variable de entorno
+
+// 🔒 Reemplaza con variable de entorno en producción
+const JWT_SECRET = process.env.JWT_SECRET || 'secreto_super_seguro';
 
 // Middleware para verificar token JWT
 const verificarToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
 
-  // Validamos que venga un token
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ mensaje: 'No autorizado. Token no enviado.' });
   }
@@ -15,7 +15,7 @@ const verificarToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.usuario = decoded; // Aquí guardamos la info del usuario en la request
+    req.usuario = decoded; // Guardamos info del usuario
     next();
   } catch (error) {
     return res.status(401).json({ mensaje: 'Token inválido o expirado' });

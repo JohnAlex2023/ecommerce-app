@@ -1,23 +1,26 @@
 <template>
   <div class="productos">
     <h2>Catálogo de Productos</h2>
-    <div v-if="cargando">Cargando productos...</div>
+
+    <div v-if="cargando" class="loading">Cargando productos...</div>
+
     <div v-else class="grid">
-      <div v-for="producto in productos" :key="producto._id" class="card">
-        <img :src="producto.imagen" alt="Imagen" class="producto-img" />
-        <h3>{{ producto.nombre }}</h3>
-        <p>{{ producto.descripcion }}</p>
-        <p><strong>${{ producto.precio }}</strong></p>
-      </div>
+      <ProductCard
+        v-for="producto in productos"
+        :key="producto._id"
+        :producto="producto"
+      />
     </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import ProductCard from './ProductCard.vue';
 
 export default {
   name: 'ProductList',
+  components: { ProductCard },
   data() {
     return {
       productos: [],
@@ -43,30 +46,21 @@ export default {
   text-align: center;
 }
 
+h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+}
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1.5rem;
-}
-
-.card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
   padding: 1rem;
-  transition: all 0.2s ease-in-out;
-  background-color: #f9f9f9;
 }
 
-.card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.producto-img {
-  max-width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 1rem;
+.loading {
+  font-size: 1.2rem;
+  color: #555;
 }
 </style>

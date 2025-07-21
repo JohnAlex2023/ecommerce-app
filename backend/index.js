@@ -5,6 +5,9 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
+require('dotenv').config();
+
+
 // Conectar a la base de datos
 connectDB();
 

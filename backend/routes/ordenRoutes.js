@@ -1,34 +1,68 @@
-// routes/ordenRoutes.js
 const express = require('express');
 const router = express.Router();
-const Orden = require('../models/Orden');
-const { verificarToken } = require('../middleware/authMiddleware');
+const Producto = require('../models/Producto');
+const { verificarToken, soloAdmin } = require('../middleware/authMiddleware');
 
-// Crear una nueva orden (usuario autenticado)
-router.post('/', verificarToken, async (req, res) => {
+// ✅ Crear producto (solo admin)
+router.post('/', verificarToken, soloAdmin, async (req, res) => {
   try {
-    const { productos, total } = req.body;
-
-    const nuevaOrden = new Orden({
-      usuario: req.usuario.id,
-      productos,
-      total
-    });
-
-    const ordenGuardada = await nuevaOrden.save();
-    res.status(201).json(ordenGuardada);
+    const nuevoProducto = new Producto(req.body);
+    const guardado = await nuevoProducto.save();
+    res.status(201).json(guardado);
   } catch (error) {
-    res.status(400).json({ mensaje: 'Error al crear orden', error: error.message });
+    res.status(400).json({ mensaje: 'Error al crear producto', error: error.message });
   }
 });
 
-// Ver órdenes del usuario autenticado
-router.get('/mis-ordenes', verificarToken, async (req, res) => {
+// ✅ Obtener todos (público)
+router.get('/', async (req, res) => {
   try {
-    const ordenes = await Orden.find({ usuario: req.usuario.id }).populate('productos.producto');
-    res.json(ordenes);
+    const productos = await Producto.find();
+    res.json(productos);
   } catch (error) {
-    res.status(500).json({ mensaje: 'Error al obtener tus órdenes' });
+    res.status(500).json({ mensaje: 'Error al obtener productos', error: error.message });
+  }
+});
+
+// ✅ Obtener por ID (público)
+router.get('/:id', async (req, res) => {
+  try {
+    const producto = await Producto.findById(req.params.id);
+    if (!producto) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json(producto);
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al obtener producto', error: error.message });
+  }
+});
+
+// ✅ Actualizar (solo admin)
+router.put('/:id', verificarToken, soloAdmin, async (req, res) => {
+  try {
+    const actualizado = await Producto.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+    if (!actualizado) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json(actualizado);
+  } catch (error) {
+    res.status(400).json({ mensaje: 'Error al actualizar producto', error: error.message });
+  }
+});
+
+// ✅ Eliminar (solo admin)
+router.delete('/:id', verificarToken, soloAdmin, async (req, res) => {
+  try {
+    const eliminado = await Producto.findByIdAndDelete(req.params.id);
+    if (!eliminado) {
+      return res.status(404).json({ mensaje: 'Producto no encontrado' });
+    }
+    res.json({ mensaje: 'Producto eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ mensaje: 'Error al eliminar producto', error: error.message });
   }
 });
 
