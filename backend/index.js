@@ -1,11 +1,15 @@
+
+
 // index.js
+require('dotenv').config();
+
+
 const express = require('express');
 const connectDB = require('./config/db');
 const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-require('dotenv').config();
 
 
 // Conectar a la base de datos

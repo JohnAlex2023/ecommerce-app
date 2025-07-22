@@ -27,14 +27,19 @@ export default {
       cargando: true
     };
   },
-  async mounted() {
-    try {
-      const res = await axios.get('http://localhost:3000/api/productos');
-      this.productos = res.data;
-    } catch (error) {
-      console.error('Error al obtener productos:', error);
-    } finally {
-      this.cargando = false;
+  mounted() {
+    this.cargarProductos();
+  },
+  methods: {
+    async cargarProductos() {
+      try {
+        const res = await axios.get('http://localhost:3000/api/productos');
+        this.productos = res.data;
+      } catch (error) {
+        console.error('Error al obtener productos:', error);
+      } finally {
+        this.cargando = false;
+      }
     }
   }
 };
