@@ -1,17 +1,19 @@
-// config/db.js
 const mongoose = require('mongoose');
+require('dotenv').config(); // Cargar variables desde .env
 
 const connectDB = async () => {
   try {
-    await mongoose.connect('mongodb://localhost:27017/ecommerce', {
+    const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce';
+
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
 
-    console.log('✅ Conectado a MongoDB');
+    console.log('✅ Conectado a MongoDB Atlas');
   } catch (error) {
     console.error('❌ Error al conectar a MongoDB:', error.message);
-    process.exit(1); // Detiene el servidor si falla la conexión
+    process.exit(1);
   }
 };
 

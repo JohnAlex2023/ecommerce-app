@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: ecommerce-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: MONGODB_URI
+        value: mongodb+srv://Alex:987654321Utp@cluster0.fp2jpqf.mongodb.net/
+      - key: PORT
+        value: 3000
