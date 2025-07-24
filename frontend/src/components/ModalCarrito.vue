@@ -1,3 +1,4 @@
+<!--  -->
 <template>
   <div class="modal-backdrop" @click.self="cerrar">
     <div class="modal-carrito">
@@ -16,7 +17,11 @@
 
         <button class="btn btn-ir" @click="irAlCarrito">Ir al carrito</button>
         <button class="btn btn-continuar" @click="cerrar">Seguir comprando</button>
+        
+
         <button class="btn btn-pagar" @click="iniciarPago">Pagar con MercadoPago</button>
+
+
       </div>
 
       <div v-else>
@@ -27,9 +32,13 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 import { useCartStore } from '../stores/cart'
 import { useRouter } from 'vue-router'
 import { defineEmits } from 'vue'
+
+import { onMounted } from 'vue'
+
 
 const cart = useCartStore()
 const router = useRouter()
@@ -43,6 +52,30 @@ function irAlCarrito() {
   router.push({ name: 'Carrito' })
   cerrar()
 }
+
+
+async function iniciarPago() {
+  try {
+    const res = await axios.post('http://localhost:3000/api/pagos/crear-preferencia', {
+      items: cart.items.map(item => ({
+        nombre: item.nombre,
+        precio: Number(item.precio),
+        cantidad: Number(item.cantidad)
+      }))
+    })
+
+    const link = res.data.init_point
+    if (link) {
+      window.location.href = link
+    } else {
+      console.error('❌ No se recibió init_point desde el backend')
+    }
+  } catch (error) {
+    console.error('❌ Error al iniciar pago:', error)
+  }
+}
+
+
 </script>
 
 <style scoped>

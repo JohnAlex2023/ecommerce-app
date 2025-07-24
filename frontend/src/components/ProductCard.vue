@@ -1,44 +1,39 @@
 <template>
-  
   <div class="card">
-    <router-link
-      :to="{ name: 'ProductDetail', params: { id: producto._id } }"
-    >
+    <router-link :to="{ name: 'ProductDetail', params: { id: producto._id } }">
       <img :src="producto.imagen" alt="Imagen del producto" class="img-link" />
     </router-link>
-    <h3>{{ producto.nombre }}</h3>
+
+    <h3 class="nombre">{{ producto.nombre }}</h3>
     <p class="descripcion">{{ producto.descripcion }}</p>
     <p class="precio">${{ producto.precio.toFixed(2) }}</p>
-    <router-link
-      :to="{ name: 'ProductDetail', params: { id: producto._id } }"
-      class="btn"
-    >
-      Ver detalles
-    </router-link>
-    
-    <div class="cantidad-container">
-      <button class="cantidad-btn" @click="cambiarCantidad(-1)" :disabled="cantidad <= 1">-</button>
-      <input type="number" v-model.number="cantidad" min="1" class="cantidad-input" />
-      <button class="cantidad-btn" @click="cambiarCantidad(1)">+</button>
-    </div>
 
-    <button class="btn" @click="agregarAlCarrito">Agregar al carrito</button>
-    
-    <ModalCarrito v-if="mostrarModal" @close="mostrarModal = false" />
+    <div class="acciones">
+      <router-link :to="{ name: 'ProductDetail', params: { id: producto._id } }" class="btn-outline">
+        Ver detalles
+      </router-link>
+
+      <div class="cantidad-container">
+        <button class="cantidad-btn" @click="cambiarCantidad(-1)" :disabled="cantidad <= 1">-</button>
+        <input type="number" v-model.number="cantidad" min="1" class="cantidad-input" />
+        <button class="cantidad-btn" @click="cambiarCantidad(1)">+</button>
+      </div>
+
+      <button class="btn-primary" @click="agregarAlCarrito">Agregar al carrito</button>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
 import { useCartStore } from '../stores/cart'
-import ModalCarrito from './ModalCarrito.vue'
-const cart = useCartStore()
-const props = defineProps(['producto'])
+import { useModalStore } from '../stores/modal'
 
-const mostrarModal = ref(false)
+const props = defineProps(['producto'])
+const cart = useCartStore()
+const modal = useModalStore()
 
 const cantidad = ref(props.producto.cantidad || 1)
-
 
 function cambiarCantidad(valor) {
   const nuevaCantidad = cantidad.value + valor
@@ -47,122 +42,128 @@ function cambiarCantidad(valor) {
   }
 }
 
-
 function agregarAlCarrito() {
   cart.addToCart({ ...props.producto, cantidad: cantidad.value })
   cantidad.value = 1
-  mostrarModal.value = true
-}
-
-
-function eliminar(id) {
-  cart.removeItem(id)
-}
-
-function finalizarCompra() {
-  alert('¡Gracias por tu compra!')
-  cart.clearCart()
+  modal.abrirModal()
 }
 </script>
 
 <style scoped>
 .card {
-  background: white;
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   padding: 1.5rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
 .img-link {
   width: 100%;
   height: 180px;
   object-fit: contain;
-  border-radius: 6px;
+  border-radius: 10px;
   margin-bottom: 1rem;
+  transition: transform 0.3s;
 }
 
-h3 {
-  margin: 0.5rem 0;
+.nombre {
   font-size: 1.2rem;
   font-weight: 600;
+  color: #333;
+  margin-bottom: 0.3rem;
 }
 
 .descripcion {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #666;
+  margin-bottom: 0.6rem;
   min-height: 60px;
 }
 
 .precio {
-  margin: 1rem 0;
-  font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #2c3e50;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
 
-.btn {
-  display: inline-block;
+.acciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-primary {
   background-color: #007bff;
   color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  text-decoration: none;
-  transition: background 0.2s ease;
-  margin: 0.5rem 0 0 0;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
-.btn:hover {
+.btn-primary:hover {
   background-color: #0056b3;
 }
 
-.btn-finalizar {
-  display: inline-block;
-  background-color: #28a745;
-  color: white;
+.btn-outline {
+  background: transparent;
+  border: 2px solid #007bff;
+  color: #007bff;
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-weight: 600;
   text-decoration: none;
-  transition: background 0.2s ease;
-  margin: 0.5rem 0 0 0;
+  transition: all 0.3s ease;
 }
 
-.btn-finalizar:hover {
-  background-color: #218838;
+.btn-outline:hover {
+  background: #007bff;
+  color: white;
 }
 
 .cantidad-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 1rem 0 0.5rem 0;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
+
 .cantidad-btn {
-  background: #007bff;
-  color: #fff;
+  background: #e0e0e0;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   width: 32px;
   height: 32px;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.3s;
 }
+
+.cantidad-btn:hover {
+  background: #d0d0d0;
+}
+
 .cantidad-btn:disabled {
   background: #ccc;
   cursor: not-allowed;
 }
+
 .cantidad-input {
   width: 50px;
   text-align: center;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 6px;
   height: 32px;
   font-size: 1rem;
 }

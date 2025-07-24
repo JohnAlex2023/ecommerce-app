@@ -1,3 +1,4 @@
+// App.vue (modificado con manejo global del modal)
 <template>
   <div id="app">
     <Navbar />
@@ -7,19 +8,20 @@
     </main>
 
     <Footer />
+
+    <!-- Solo una instancia global del modal -->
+    <ModalCarrito v-if="modal.mostrarModalCarrito" @close="modal.cerrarModal" />
   </div>
 </template>
 
-<script>
-import Footer from './components/Footer.vue';
-import Navbar from './components/Navbar.vue';
+<script setup>
+import Footer from './components/Footer.vue'
+import Navbar from './components/Navbar.vue'
+import ModalCarrito from './components/ModalCarrito.vue'
+import { useModalStore } from './stores/modal'
 
-export default {
-  components: {
-    Footer,
-    Navbar
-  }
-};
+const modal = useModalStore()
+console.log(modal) 
 </script>
 
 <style scoped>
